@@ -32,7 +32,6 @@ with st.sidebar:
     st.header("⚙️ Kontrol Paneli")
     
     # 1. CANLI SAYAÇ İÇİN YER TUTUCU (PLACEHOLDER)
-    # Burayı boş bırakıyoruz, döngü içinde dolduracağız
     metric_placeholder = st.empty()
     
     # 2. SON İHLAL FOTOSU İÇİN YER TUTUCU
@@ -53,7 +52,6 @@ def update_metrics():
     try:
         df = pd.read_csv(RAPOR_DOSYASI)
         count = len(df)
-        # Yer tutucuyu güncelle
         metric_placeholder.metric("Toplam İhlal Sayısı", count, delta="Canlı")
     except:
         metric_placeholder.metric("Toplam İhlal Sayısı", 0)
@@ -131,7 +129,6 @@ if uploaded_file:
     with col2:
         st.info("2. Alan çizildiyse başlatın.")
         start_btn = st.button("▶️ ANALİZİ BAŞLAT", type="primary")
-        # İhlal bildirimleri için kutu
         log_box = st.container(height=400)
 
     # --- ANALİZ DÖNGÜSÜ ---
@@ -143,7 +140,13 @@ if uploaded_file:
         son_foto_zamani = 0
         foto_bekleme = 2.0 
 
-        # --- GÜNCELLENMİŞ ANALİZ DÖNGÜSÜ ---
+        # --- HATA DÜZELTME KISMI ---
+        # Döngüye girmeden değişkenleri boş olarak tanımlıyoruz ki hata vermesin
+        last_boxes = []
+        last_ids = []
+        last_classes = []
+        # ---------------------------
+
         while cap.isOpened():
             ret, frame = cap.read()
             if not ret: break
@@ -155,24 +158,29 @@ if uploaded_file:
             cv2.polylines(frame, [zone_poly], isClosed=True, color=(0, 255, 255), thickness=2)
 
             # --- YOLO ANALİZİ ---
-            # tracker="bytetrack.yaml" nesneleri daha sıkı tutar
             if frame_count % process_n_frames == 0:
+                # ByteTrack kullanıyoruz
                 results = model.track(frame, persist=True, verbose=False, imgsz=640, conf=confidence, tracker="bytetrack.yaml")
                 
-                # Sadece eğer bir tespit varsa kutuları güncelle
-                # Eğer tespit yoksa ESKİ KUTULARI KORU (Yanıp sönmeyi engeller)
+                # Eğer tespit varsa güncelle
                 if results[0].boxes.id is not None:
                     last_boxes = results[0].boxes.xywh.cpu().numpy()
                     last_ids = results[0].boxes.id.int().cpu().numpy()
                     last_classes = results[0].boxes.cls.int().cpu().numpy()
                 else:
-                    # Eğer kimse yoksa kutuları hemen silme, 
-                    # sadece çok uzun süre boş kalırsa sil (Örn: 10 kare boyunca)
+                    # Kimse yoksa bir şey yapma, eski kutular kalsın (veya istersen silmek için last_boxes = [] yapabilirsin)
                     pass 
 
             # --- GÖRSELLEŞTİRME ---
             if len(last_boxes) > 0:
-                for box, track_id, class_id in zip(last_boxes, last_ids, last_classes):
+                # zip fonksiyonu hata vermesin diye en kısa olanın uzunluğunu alalım
+                min_len = min(len(last_boxes), len(last_ids), len(last_classes))
+                
+                for i in range(min_len):
+                    box = last_boxes[i]
+                    track_id = last_ids[i]
+                    class_id = last_classes[i]
+
                     x, y, w, h = box
                     foot_x, foot_y = int(x), int(y + h / 2) # Ayak noktası
                     
@@ -183,10 +191,8 @@ if uploaded_file:
                         
                         # --- İHLAL (Kırmızı) ---
                         if class_id == 0: 
-                            # Kırmızı Kutu
                             cv2.rectangle(frame, (x1, y1), (x2, y2), (0,0,255), 2)
                             
-                            # ID Numarası ve Etiket
                             label = f"ID:{track_id} IHLAL"
                             (w_text, h_text), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)
                             cv2.rectangle(frame, (x1, y1 - 25), (x1 + w_text, y1), (0,0,255), -1)
@@ -197,12 +203,10 @@ if uploaded_file:
                                 fname = f"ihlal_{track_id}_{datetime.now().strftime('%H%M%S')}.jpg"
                                 full_path = os.path.join(IHLAL_KLASORU, fname)
                                 
-                                # Kaydet ve Logla
                                 cv2.imwrite(full_path, frame)
                                 log_to_csv(track_id, full_path)
                                 update_metrics()
                                 
-                                # Yan menüye fotosunu bas
                                 rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                                 ihlal_foto_placeholder.image(rgb_frame, caption=f"İhlal ID: {track_id}")
                                 log_box.error(f"⚠️ Tespit: ID {track_id}")
@@ -212,7 +216,6 @@ if uploaded_file:
                         # --- GÜVENLİ (Yeşil) ---
                         else:
                             cv2.rectangle(frame, (x1, y1), (x2, y2), (0,255,0), 2)
-                            # ID Numarası (Yeşil için de yazalım ki takip belli olsun)
                             label_ok = f"ID:{track_id}"
                             cv2.putText(frame, label_ok, (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,255,0), 2)
 
@@ -223,4 +226,3 @@ if uploaded_file:
             frame_count += 1
 
         cap.release()
-        #python -m streamlit run app.py
