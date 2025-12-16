@@ -5,3 +5,4 @@ pandas
 streamlit-drawable-canvas
 numpy
 pillow
+lapx>=0.5.5
