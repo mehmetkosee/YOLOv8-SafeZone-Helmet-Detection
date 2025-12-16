@@ -43,15 +43,16 @@ To run the project locally on your machine (Recommended for GPU acceleration):
 
 ## 📂 Project Structure
 
-├── app.py               # Main Streamlit application script
-├── best.pt              # Custom trained YOLOv8 model weights
-├── detect.py            # Standalone script for terminal-based inference
-├── requirements.txt     # Python dependencies
-├── packages.txt         # System-level dependencies (for Linux/Cloud)
-├── ihlal_raporu.csv     # Auto-generated violation report (CSV)
-├── ihlal_kayitlari/     # Directory for violation snapshots
-├── egitim_notlari/      # Jupyter Notebooks used for model training
-└── test_videolari/      # (Optional) Sample videos for testing
+├── app.py # Main Streamlit application script
+├── best.pt # Custom trained YOLOv8 model weights
+├── detect.py # Standalone script for terminal-based inference
+├── requirements.txt # Python dependencies
+├── packages.txt # System-level dependencies (for Linux/Cloud)
+├── ihlal_raporu.csv # Auto-generated violation report (CSV)
+├── ihlal_kayitlari/ # Directory for violation snapshots
+├── egitim_notlari/ # Jupyter Notebooks used for model training
+└── test_videolari/ # (Optional) Sample videos for testing
+
 
 ## ℹ️ Performance Note
 This project is deployed on Streamlit Community Cloud. Since free cloud instances utilize CPU-only environments, the live demo runs at a lower FPS compared to local execution.
