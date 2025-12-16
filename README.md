@@ -1,5 +1,8 @@
 # 👷 YOLOv8 SafeZone: AI-Powered Helmet Detection System
 
+[](https://github.com/user-attachments/assets/89a22cdd-850d-4535-90be-20efc925fada)
+
+
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://yolov8-safezone-helmet-detection.streamlit.app)
 [![YOLOv8](https://img.shields.io/badge/YOLOv8-Ultralytics-blue)](https://github.com/ultralytics/ultralytics)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-yellow)](https://www.python.org/)
@@ -9,6 +12,8 @@ This project is a **real-time Personal Protective Equipment (PPE) detection syst
 Using a custom-trained **YOLOv8** model and **Streamlit** interface, it analyzes video feeds to detect whether workers within a user-defined **"Safe Zone" (Geofence)** are wearing hard hats.
 
 🔗 **Live Demo:** [Try the App Here](https://yolov8-safezone-helmet-detection.streamlit.app)
+
+<img width="1265" height="777" alt="Ekran görüntüsü 2025-12-16 133227" src="https://github.com/user-attachments/assets/7bdc50c0-4c99-4d97-a9c8-90288fe2ad3a" />
 
 ---
 
@@ -21,6 +26,8 @@ Using a custom-trained **YOLOv8** model and **Streamlit** interface, it analyzes
   - A snapshot is saved to the `ihlal_kayitlari/` directory.
   - Date, time, and status are logged into a CSV file.
 - **📊 Live Dashboard:** Real-time violation counters and recent snapshots are displayed on the sidebar.
+  
+<img width="2656" height="1600" alt="analiz_graf_ing" src="https://github.com/user-attachments/assets/80ac5cae-0009-4b30-81ca-fece39a8ba49" />
 
 ---
 
