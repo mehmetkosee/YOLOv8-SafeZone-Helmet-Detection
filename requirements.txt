@@ -1,0 +1,7 @@
+streamlit
+ultralytics
+opencv-python-headless
+pandas
+streamlit-drawable-canvas
+numpy
+pillow
