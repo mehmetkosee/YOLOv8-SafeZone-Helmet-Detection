@@ -17,6 +17,11 @@ Using a custom-trained **YOLOv8** model and **Streamlit** interface, it analyzes
 
 ---
 
+<img width="1266" height="779" alt="Ekran görüntüsü 2025-12-16 133739" src="https://github.com/user-attachments/assets/6badd9d4-1199-4066-8290-a5391d651ef2" />
+
+---
+
+
 ## 🚀 Features
 
 - **🎯 Virtual Geofence:** Users can draw a polygon zone on the video interface. Only personnel entering this risk zone are analyzed.
