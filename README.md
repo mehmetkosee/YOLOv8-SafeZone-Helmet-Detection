@@ -11,6 +11,46 @@ This project is a **real-time Personal Protective Equipment (PPE) detection syst
 
 Using a custom-trained **YOLOv8** model and **Streamlit** interface, it analyzes video feeds to detect whether workers within a user-defined **"Safe Zone" (Geofence)** are wearing hard hats.
 
+## 🧠 Model Training & Performance
+
+The YOLOv8 model was trained using a dataset sourced from **Roboflow**, specifically designed for hard hat detection. The training process was conducted on a high-performance **NVIDIA A100 GPU**.
+
+### 📊 Training Configuration
+* **Model Architecture:** YOLOv8m (Medium)
+* **Epochs:** 50
+* **Batch Size:** 128
+* **Image Size:** 640x640
+* **Optimizer:** AdamW
+* **Learning Rate:** 0.001
+
+### 📈 Model Metrics
+The model demonstrated **exceptional performance** in the critical safety classes (**Helmet** and **Head**), achieving over **96% mAP50**.
+
+| Class       | Precision (P) | Recall (R) | mAP50  | mAP50-95 |
+|-------------|---------------|------------|--------|----------|
+| **All** | 0.625         | 0.643      | 0.652  | 0.468    |
+| **Head** | **0.900** | **0.958** | **0.963** | **0.692** |
+| **Helmet** | **0.943** | **0.961** | **0.983** | **0.705** |
+| **Person*** | 0.031         | 0.010      | 0.011  | 0.008    |
+
+*(\*Note: The 'Person' class was present in the dataset but not the primary focus of this safety application, which relies on Head/Helmet differentiation.)*
+
+### 💻 Training Command
+The model was trained using the Ultralytics Python SDK with optimized parameters for A100 GPU:
+```python
+results = model.train(
+    data='data.yaml',
+    epochs=50,
+    patience=10,
+    imgsz=640,
+    batch=128,
+    device=0,
+    optimizer='AdamW',
+    lr0=0.001,
+    name='hard_hat_safety_check'
+)
+```
+
 🔗 **Live Demo:** [Try the App Here](https://yolov8-safezone-helmet-detection.streamlit.app)
 
 <img width="1265" height="777" alt="Ekran görüntüsü 2025-12-16 133227" src="https://github.com/user-attachments/assets/7bdc50c0-4c99-4d97-a9c8-90288fe2ad3a" />
