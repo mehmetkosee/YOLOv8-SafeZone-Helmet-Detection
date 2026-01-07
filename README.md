@@ -35,6 +35,9 @@ The model demonstrated **exceptional performance** in the critical safety classe
 
 *(\*Note: The 'Person' class was present in the dataset but not the primary focus of this safety application, which relies on Head/Helmet differentiation.)*
 
+
+<img width="2656" height="1600" alt="analiz_graf_ing" src="https://github.com/user-attachments/assets/80ac5cae-0009-4b30-81ca-fece39a8ba49" />
+
 ### 💻 Training Command
 The model was trained using the Ultralytics Python SDK with optimized parameters for A100 GPU:
 ```python
@@ -72,7 +75,6 @@ results = model.train(
   - Date, time, and status are logged into a CSV file.
 - **📊 Live Dashboard:** Real-time violation counters and recent snapshots are displayed on the sidebar.
   
-<img width="2656" height="1600" alt="analiz_graf_ing" src="https://github.com/user-attachments/assets/80ac5cae-0009-4b30-81ca-fece39a8ba49" />
 
 ---
 
