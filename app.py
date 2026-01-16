@@ -8,7 +8,9 @@ from datetime import datetime
 from streamlit_drawable_canvas import st_canvas
 from PIL import Image
 
-# ---  BLOK: AYARLAR VE HAZIRLIK ---
+# ==========================================
+# 1. AYARLAR VE KURULUM
+# ==========================================
 MODEL_PATH = "best.pt"
 RAPOR_DOSYASI = "ihlal_raporu.csv"
 IHLAL_KLASORU = "ihlal_kayitlari"
@@ -21,107 +23,144 @@ if not os.path.exists(IHLAL_KLASORU):
 if not os.path.exists(RAPOR_DOSYASI):
     pd.DataFrame(columns=["Tarih", "Saat", "Durum", "Dosya_Yolu"]).to_csv(RAPOR_DOSYASI, index=False)
 
-st.set_page_config(page_title="SafeZone AI", page_icon="👷")
+st.set_page_config(page_title="SafeZone AI", page_icon="👷", layout="wide")
 
-# --- BLOK: MODELİ YÜKLEME ---
+# ==========================================
+# 2. MODELİ YÜKLEME (CACHE İLE HIZLANDIRMA)
+# ==========================================
 @st.cache_resource
 def load_model():
     return YOLO(MODEL_PATH)
 
 try:
     model = load_model()
-except:
-    st.error("Model bulunamadı! best.pt dosyasını kontrol et.")
+except Exception as e:
+    st.error(f"Model yüklenirken hata oluştu: {e}")
     st.stop()
 
-#SIDEBAR VE UPLOAD
+# ==========================================
+# 3. ARAYÜZ (YAN MENÜ)
+# ==========================================
 with st.sidebar:
-    st.header("Ayarlar")
-    confidence = st.slider("Hassasiyet", 0.25, 1.0, 0.40)
-st.title("👷 Baret Tespit Sistemi")
+    st.header("⚙️ Ayarlar")
+    confidence = st.slider("Hassasiyet (Confidence)", 0.25, 1.0, 0.40)
+    st.info("Bu sistem Cloud performansı için optimize edilmiş **Resim Analizi** modunda çalışmaktadır.")
+    st.divider()
+    st.write("👨‍💻 Geliştirici: Mehmet Köse")
 
-uploaded_file = st.file_uploader("Analiz edilecek fotoğrafı yükleyin", type=['jpg', 'png', 'jpeg'])
+st.title("👷 Yapay Zeka Destekli Baret Tespit Sistemi")
+st.markdown("Analiz etmek istediğiniz fotoğrafı yükleyin ve **Polygon** aracıyla riskli alanı çizin.")
 
-# ---  BLOK: RESİM İŞLEME VE ÇİZİM ---
+uploaded_file = st.file_uploader("Bir Fotoğraf Yükleyin", type=['jpg', 'png', 'jpeg'])
+
+# ==========================================
+# 4. GÖRÜNTÜ İŞLEME VE ÇİZİM
+# ==========================================
 if uploaded_file:
-
+    # --- RESİM OKUMA VE DÜZELTME (HATA ÖNLEYİCİ) ---
     image_pil = Image.open(uploaded_file)
-    image_cv2 = np.array(image_pil)
+    
+    image_pil = image_pil.convert("RGB") 
+    
+    # OpenCV ve YOLO için Numpy dizisine çevir
+    image_cv2 = np.array(image_pil)                 
 
+    # Ekranı ikiye böl: Çizim ve Sonuç
     col1, col2 = st.columns([2, 1])
     zone_poly = None
 
-    
+    # --- SOL KOLON: ÇİZİM ALANI ---
     with col1:
-        st.info("Riskli alanı çizin:")
+        st.info("👇 **Adım 1:** Sol menüden 'Polygon' aracını seçip alanı çizin.")
         
+        # Çizim Aracı
         canvas_result = st_canvas(
-            fill_color="rgba(255, 0, 0, 0.3)", 
+            fill_color="rgba(255, 0, 0, 0.3)",  # Alan içi rengi
             stroke_width=2,
-            background_image=image_pil,
+            stroke_color="#ff0000",             # Çizgi rengi
+            background_image=image_pil,         # Arka plana yüklenen resmi koy
             update_streamlit=True,
             height=480,
             width=640,
-            drawing_mode="polygon",
+            drawing_mode="polygon",             # Çizim modu: Çokgen
             key="canvas",
         )
 
+        # --- ÇİZİM VERİSİNİ ALMA (GÜVENLİK KONTROLLÜ) ---
         if canvas_result.json_data is not None:
             objects = canvas_result.json_data["objects"]
-            if len(objects) > 0:
-                
-                path_data = objects[0]["path"]
-                points = []
-                for p in path_data:
-                    if p[0] == 'M' or p[0] == 'L':
-                        points.append([int(p[1]), int(p[2])])
-                
-                if len(points) > 2:
-                    
-                    zone_poly = np.array(points, np.int32).reshape((-1, 1, 2))
-
-    with col2:
-        analyze_btn = st.button("🔍 TESPİT ET", type="primary")
-
-    # --- BLOK: ANALİZ VE SONUÇ ---
-    if analyze_btn and zone_poly is not None:
-        
-        results = model.predict(image_cv2, conf=confidence, imgsz=640)
-        
-        boxes = results[0].boxes.xywh.cpu().numpy()
-        classes = results[0].boxes.cls.int().cpu().numpy()
-
-        final_img = image_cv2.copy()
-        
-        cv2.polylines(final_img, [zone_poly], isClosed=True, color=(255, 255, 0), thickness=3)
-        
-        ihlal_sayisi = 0
-
-        for box, class_id in zip(boxes, classes):
-            x, y, w, h = box
-            foot_x, foot_y = int(x), int(y + h / 2)
             
-            if cv2.pointPolygonTest(zone_poly, (foot_x, foot_y), False) >= 0:
+            if len(objects) > 0:
+                obj = objects[0] # İlk çizimi al
                 
-
-                x1, y1, x2, y2 = int(x-w/2), int(y-h/2), int(x+w/2), int(y+h/2)
-                
-
-                if class_id == 0: 
-                    color = (255, 0, 0) 
-                    label = "BARET YOK"
-                    ihlal_sayisi += 1
+                # "KeyError: path" hatasını önlemek için kontrol
+                if "path" in obj:
+                    path_data = obj["path"]
+                    points = []
+                    for p in path_data:
+                        if p[0] == 'M' or p[0] == 'L': # SVG komutlarını (Move, Line) oku
+                            points.append([int(p[1]), int(p[2])])
+                    
+                    if len(points) > 2:
+                        # Koordinatları Numpy formatına çevir
+                        zone_poly = np.array(points, np.int32).reshape((-1, 1, 2))
                 else:
-                    color = (0, 255, 0)
-                    label = "GUVENLI"
+                    st.warning("⚠️ Lütfen alanı kapatarak tam bir çokgen çizin.")
 
-                
-                cv2.rectangle(final_img, (x1, y1), (x2, y2), color, 2)
-                cv2.putText(final_img, label, (x1, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
+    # --- SAĞ KOLON: BUTON VE ANALİZ ---
+    with col2:
+        st.info("👇 **Adım 2:** Analizi başlatın.")
+        analyze_btn = st.button("🔍 TESPİT ET", type="primary", use_container_width=True)
 
-        st.image(final_img, caption=f"Analiz Tamamlandı. {ihlal_sayisi} ihlal bulundu.", use_column_width=True)
-        
-        if ihlal_sayisi > 0:
-            st.error(f"⚠️ Dikkat! {ihlal_sayisi} personel baret takmıyor.")
-        else:
-            st.success("✅ Bölge güvenli.")
+        if analyze_btn:
+            if zone_poly is None:
+                st.error("⚠️ Lütfen önce soldaki resim üzerinde bir alan çizin!")
+            else:
+                with st.spinner("Yapay Zeka Analiz Ediyor..."):
+                    # YOLO Tahmini
+                    results = model.predict(image_cv2, conf=confidence, imgsz=640)
+                    
+                    # Sonuçları al
+                    boxes = results[0].boxes.xywh.cpu().numpy()  # x, y, genislik, yukseklik
+                    classes = results[0].boxes.cls.int().cpu().numpy() # sınıf id'leri
+                    
+                    final_img = image_cv2.copy()
+                    
+                    # Çizilen alanı sarı çizgiyle göster
+                    cv2.polylines(final_img, [zone_poly], isClosed=True, color=(0, 255, 255), thickness=3)
+                    
+                    ihlal_sayisi = 0
+                    
+                    # Tespitleri Kontrol Et
+                    for box, class_id in zip(boxes, classes):
+                        x, y, w, h = box
+                        # Kutunun "ayak" noktası (yerle temas eden nokta)
+                        foot_x, foot_y = int(x), int(y + h / 2)
+                        
+                        # Nokta çizilen alanın içinde mi?
+                        if cv2.pointPolygonTest(zone_poly, (foot_x, foot_y), False) >= 0:
+                            
+                            x1, y1, x2, y2 = int(x-w/2), int(y-h/2), int(x+w/2), int(y+h/2)
+                            
+                            # NOT: Senin modeline göre 0 veya 1 değişebilir.
+                            # Genelde: 0 -> Head (Baretsiz/İhlal), 1 -> Helmet (Güvenli)
+                            if class_id == 0: # IHLAL DURUMU
+                                color = (255, 0, 0) # Kırmızı
+                                label = "BARET YOK"
+                                ihlal_sayisi += 1
+                            else: # GUVENLI DURUM
+                                color = (0, 255, 0) # Yeşil
+                                label = "GUVENLI"
+
+                            # Kutu ve Yazı Çiz
+                            cv2.rectangle(final_img, (x1, y1), (x2, y2), color, 2)
+                            cv2.putText(final_img, label, (x1, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
+                    
+                    # Sonuç Resmini Göster
+                    st.image(final_img, caption="Analiz Sonucu", use_column_width=True)
+                    
+                    # Bildirimler
+                    if ihlal_sayisi > 0:
+                        st.error(f"🚨 DİKKAT: Bölgede {ihlal_sayisi} adet baretsiz personel tespit edildi!")
+                    else:
+                        st.success("✅ Bölge Güvenli. İhlal tespit edilmedi.")
