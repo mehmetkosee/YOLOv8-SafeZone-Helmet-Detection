@@ -6,7 +6,7 @@ import time
 from datetime import datetime
 
 # --- AYARLAR ---
-video_path = "test5.mp4" # 0 Webcam
+video_path = 0 # 0 Webcam
 model_path = "best.pt"
 
 # FPS AYARI: 4 karede bir analiz yap (Hem akıcı hem hızlı)
