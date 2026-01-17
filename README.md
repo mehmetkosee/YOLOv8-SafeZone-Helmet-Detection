@@ -54,8 +54,6 @@ results = model.train(
 )
 ```
 
-🔗 **Live Demo:** [Try the App Here](https://yolov8-safezone-helmet-detection.streamlit.app/)
-
 <img width="1265" height="777" alt="Ekran görüntüsü 2025-12-16 133227" src="https://github.com/user-attachments/assets/7bdc50c0-4c99-4d97-a9c8-90288fe2ad3a" />
 
 ---
@@ -85,13 +83,7 @@ The project offers different capabilities depending on where it is deployed:
 | **Streamlit Cloud** | 🖼️ **Image Only** | Optimized for web performance. Upload snapshots for instant analysis without latency. |
 | **Local Machine** | 🎥 **Video & Image** | Use the script `detect.py` to analyze videos (mp4/avi) locally. |
 
-### 🎥 How to Run Video Analysis Locally
-If you want to process videos, clone the repository and run the standalone detection script:
-
-```bash
-# Example command for video inference
-python detect.py --source test_video.mp4 --weights best.pt
-```
+🔗 **Live Demo:** [Try the App Here](https://yolov8-safezone-helmet-detection.streamlit.app/)
 
 <img width="1891" height="896" alt="image" src="https://github.com/user-attachments/assets/355a7a29-2588-455b-815c-3412a65ce14a" />
 
