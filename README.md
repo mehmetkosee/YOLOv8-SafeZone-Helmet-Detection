@@ -83,7 +83,7 @@ The project offers different capabilities depending on where it is deployed:
 | Platform | Mode | Description |
 |----------|------|-------------|
 | **Streamlit Cloud** | 🖼️ **Image Only** | Optimized for web performance. Upload snapshots for instant analysis without latency. |
-| **Local Machine** | 🎥 **Video & Image** | Use the `detect.py` script locally to analyze full video feeds (mp4/avi) with high FPS using your GPU. |
+| **Local Machine** | 🎥 **Video & Image** | Use the script `detect.py` to analyze videos (mp4/avi) locally. |
 
 ### 🎥 How to Run Video Analysis Locally
 If you want to process videos, clone the repository and run the standalone detection script:
@@ -92,6 +92,9 @@ If you want to process videos, clone the repository and run the standalone detec
 # Example command for video inference
 python detect.py --source test_video.mp4 --weights best.pt
 ```
+
+<img width="1891" height="896" alt="image" src="https://github.com/user-attachments/assets/355a7a29-2588-455b-815c-3412a65ce14a" />
+
 
 ---
 
