@@ -105,7 +105,7 @@ To run the project locally on your machine (Recommended for GPU acceleration):
 
 3. **Run the application:**
    ```bash
-   streamlit run app.py
+   python -m streamlit run app.py
 
 ## 📂 Project Structure
 
