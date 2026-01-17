@@ -54,7 +54,7 @@ results = model.train(
 )
 ```
 
-🔗 **Live Demo:** [Try the App Here](https://yolov8-safezone-helmet-detection.streamlit.app)
+🔗 **Live Demo:** [Try the App Here](https://yolov8-safezone-helmet-detection.streamlit.app/)
 
 <img width="1265" height="777" alt="Ekran görüntüsü 2025-12-16 133227" src="https://github.com/user-attachments/assets/7bdc50c0-4c99-4d97-a9c8-90288fe2ad3a" />
 
@@ -74,7 +74,24 @@ results = model.train(
   - A snapshot is saved to the `ihlal_kayitlari/` directory.
   - Date, time, and status are logged into a CSV file.
 - **📊 Live Dashboard:** Real-time violation counters and recent snapshots are displayed on the sidebar.
-  
+
+
+  ## ☁️ Cloud vs. 💻 Local Usage
+
+The project offers different capabilities depending on where it is deployed:
+
+| Platform | Mode | Description |
+|----------|------|-------------|
+| **Streamlit Cloud** | 🖼️ **Image Only** | Optimized for web performance. Upload snapshots for instant analysis without latency. |
+| **Local Machine** | 🎥 **Video & Image** | Use the `detect.py` script locally to analyze full video feeds (mp4/avi) with high FPS using your GPU. |
+
+### 🎥 How to Run Video Analysis Locally
+If you want to process videos, clone the repository and run the standalone detection script:
+
+```bash
+# Example command for video inference
+python detect.py --source test_video.mp4 --weights best.pt
+```
 
 ---
 
@@ -105,15 +122,7 @@ To run the project locally on your machine (Recommended for GPU acceleration):
 ├── packages.txt         # System-level dependencies (for Linux/Cloud)
 ├── ihlal_raporu.csv     # Auto-generated violation report (CSV)
 ├── ihlal_kayitlari/     # Directory for violation snapshots
-├── egitim_notlari/      # Jupyter Notebooks used for model training
-└── test_videolari/      # (Optional) Sample videos for testing
-
-
-
-## ℹ️ Performance Note
-This project is deployed on Streamlit Community Cloud. Since free cloud instances utilize CPU-only environments, the live demo runs at a lower FPS compared to local execution.
-
-For real-time performance and high FPS, it is recommended to run this project locally on a machine with a CUDA-enabled NVIDIA GPU.
+├── train/               # Jupyter Notebooks used for model training
 
 ## 👨‍💻 Developer
 Mehmet Köse
