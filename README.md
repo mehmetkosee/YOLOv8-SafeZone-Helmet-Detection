@@ -11,6 +11,8 @@ This project is a **real-time Personal Protective Equipment (PPE) detection syst
 
 Using a custom-trained **YOLOv8** model and **Streamlit** interface, it analyzes video feeds to detect whether workers within a user-defined **"Safe Zone" (Geofence)** are wearing hard hats.
 
+🔗 **Live Demo:** [Try the App Here](https://yolov8-safezone-helmet-detection.streamlit.app/)
+
 ## 🧠 Model Training & Performance
 
 The YOLOv8 model was trained using a dataset sourced from **Roboflow**, specifically designed for hard hat detection. The training process was conducted on a high-performance **NVIDIA A100 GPU**.
@@ -54,11 +56,11 @@ results = model.train(
 )
 ```
 
-<img width="1265" height="777" alt="Ekran görüntüsü 2025-12-16 133227" src="https://github.com/user-attachments/assets/7bdc50c0-4c99-4d97-a9c8-90288fe2ad3a" />
+<img width="1250" height="720" alt="Ekran görüntüsü 2025-12-16 133227" src="https://github.com/user-attachments/assets/7bdc50c0-4c99-4d97-a9c8-90288fe2ad3a" />
 
 ---
 
-<img width="1266" height="779" alt="Ekran görüntüsü 2025-12-16 133739" src="https://github.com/user-attachments/assets/6badd9d4-1199-4066-8290-a5391d651ef2" />
+<img width="1250" height="720" alt="Ekran görüntüsü 2025-12-16 133739" src="https://github.com/user-attachments/assets/6badd9d4-1199-4066-8290-a5391d651ef2" />
 
 ---
 
@@ -82,10 +84,6 @@ The project offers different capabilities depending on where it is deployed:
 |----------|------|-------------|
 | **Streamlit Cloud** | 🖼️ **Image Only** | Optimized for web performance. Upload snapshots for instant analysis without latency. |
 | **Local Machine** | 🎥 **Video & Image** | Use the script `detect.py` to analyze videos (mp4/avi) locally. |
-
-🔗 **Live Demo:** [Try the App Here](https://yolov8-safezone-helmet-detection.streamlit.app/)
-
-<img width="1891" height="896" alt="image" src="https://github.com/user-attachments/assets/355a7a29-2588-455b-815c-3412a65ce14a" />
 
 
 ---
