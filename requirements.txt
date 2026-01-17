@@ -1,8 +1,7 @@
-streamlit==1.35.0
+numpy
+streamlit
 ultralytics
 opencv-python-headless
 pandas
 streamlit-drawable-canvas
-numpy
-pillow
 lapx>=0.5.5
