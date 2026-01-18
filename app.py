@@ -92,7 +92,7 @@ if uploaded_file:
             width=640,
             drawing_mode="polygon",
             # Dosya değişince tuvali yenilemek için ID kullanıyoruz
-            key=f"canvas_{uploaded_file.id}", 
+            key=f"canvas_{uploaded_file.name}", 
         )
 
         # --- ÇİZİM VERİSİNİ ALMA ---
