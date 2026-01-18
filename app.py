@@ -67,6 +67,7 @@ if uploaded_file:
     image_pil = image_pil.resize((640, 480))
     
     # OpenCV ve YOLO için Numpy dizisine çevir
+    # ... senin yazdığın kısım ...
     image_cv2 = np.array(image_pil)              
 
     # Ekranı ikiye böl: Çizim ve Sonuç
@@ -79,14 +80,14 @@ if uploaded_file:
         
         # Çizim Aracı
         canvas_result = st_canvas(
-            fill_color="rgba(255, 0, 0, 0.3)",  # Alan içi rengi
+            fill_color="rgba(255, 0, 0, 0.3)",
             stroke_width=2,
-            stroke_color="#ff0000",             # Çizgi rengi
-            background_image=image_pil,         # Arka plana yüklenen resmi koy
+            stroke_color="#ff0000",
+            background_image=image_pil,     # Artık boyutlanmış resmi buraya veriyoruz
             update_streamlit=True,
-            height=480,
-            width=640,
-            drawing_mode="polygon",             # Çizim modu: Çokgen
+            height=480,                     # BURASI 480 OLMALI
+            width=640,                      # BURASI 640 OLMALI
+            drawing_mode="polygon",
             key="canvas",
         )
 
