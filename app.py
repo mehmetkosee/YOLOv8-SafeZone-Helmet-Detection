@@ -63,12 +63,15 @@ if uploaded_file:
     image_pil = Image.open(uploaded_file)
     image_pil = image_pil.convert("RGB") 
 
-    # ÖNEMLİ: Resmi canvas boyutuna (640x480) getiriyoruz ki ekrana tam otursun
+    # 1. Resmi boyutlandır
     image_pil = image_pil.resize((640, 480))
     
-    # OpenCV ve YOLO için Numpy dizisine çevir
-    # ... senin yazdığın kısım ...
-    image_cv2 = np.array(image_pil)              
+    # 2. Numpy dizisine çevir (YOLO ve OpenCV için)
+    image_cv2 = np.array(image_pil)
+    
+    # 3. ÇÖZÜM BURADA: Canvas için resmi Numpy dizisinden SIFIRDAN oluşturuyoruz.
+    # Bu işlem, resimdeki meta verileri temizler ve canvas'ın resmi tanımasını sağlar.
+    canvas_image = Image.fromarray(image_cv2)
 
     # Ekranı ikiye böl: Çizim ve Sonuç
     col1, col2 = st.columns([2, 1])
@@ -83,32 +86,30 @@ if uploaded_file:
             fill_color="rgba(255, 0, 0, 0.3)",
             stroke_width=2,
             stroke_color="#ff0000",
-            background_image=image_pil,     # Boyutlandırılmış resim
+            background_image=canvas_image,  # ARTIK "TEMİZLENMİŞ" RESMİ VERİYORUZ
             update_streamlit=True,
             height=480,
             width=640,
             drawing_mode="polygon",
-            # BURASI DEĞİŞTİ: Dosya her değiştiğinde canvas'ı zorla yeniliyoruz
-            key=f"canvas_{uploaded_file.name}", 
+            # Dosya değişince tuvali yenilemek için ID kullanıyoruz
+            key=f"canvas_{uploaded_file.id}", 
         )
 
-        # --- ÇİZİM VERİSİNİ ALMA (GÜVENLİK KONTROLLÜ) ---
+        # --- ÇİZİM VERİSİNİ ALMA ---
         if canvas_result.json_data is not None:
             objects = canvas_result.json_data["objects"]
             
             if len(objects) > 0:
-                obj = objects[0] # İlk çizimi al
+                obj = objects[0] 
                 
-                # "KeyError: path" hatasını önlemek için kontrol
                 if "path" in obj:
                     path_data = obj["path"]
                     points = []
                     for p in path_data:
-                        if p[0] == 'M' or p[0] == 'L': # SVG komutlarını (Move, Line) oku
+                        if p[0] == 'M' or p[0] == 'L': 
                             points.append([int(p[1]), int(p[2])])
                     
                     if len(points) > 2:
-                        # Koordinatları Numpy formatına çevir
                         zone_poly = np.array(points, np.int32).reshape((-1, 1, 2))
                 else:
                     st.warning("⚠️ Lütfen alanı kapatarak tam bir çokgen çizin.")
