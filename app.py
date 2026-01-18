@@ -8,6 +8,8 @@ from datetime import datetime
 from streamlit_drawable_canvas import st_canvas
 from PIL import Image
 
+cv2.setNumThreads(0)
+
 # ==========================================
 # 1. AYARLAR VE KURULUM
 # ==========================================
