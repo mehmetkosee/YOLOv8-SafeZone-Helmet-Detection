@@ -83,12 +83,13 @@ if uploaded_file:
             fill_color="rgba(255, 0, 0, 0.3)",
             stroke_width=2,
             stroke_color="#ff0000",
-            background_image=image_pil,     # Artık boyutlanmış resmi buraya veriyoruz
+            background_image=image_pil,     # Boyutlandırılmış resim
             update_streamlit=True,
-            height=480,                     # BURASI 480 OLMALI
-            width=640,                      # BURASI 640 OLMALI
+            height=480,
+            width=640,
             drawing_mode="polygon",
-            key="canvas",
+            # BURASI DEĞİŞTİ: Dosya her değiştiğinde canvas'ı zorla yeniliyoruz
+            key=f"canvas_{uploaded_file.name}", 
         )
 
         # --- ÇİZİM VERİSİNİ ALMA (GÜVENLİK KONTROLLÜ) ---
