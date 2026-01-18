@@ -59,13 +59,15 @@ uploaded_file = st.file_uploader("Bir Fotoğraf Yükleyin", type=['jpg', 'png', 
 # 4. GÖRÜNTÜ İŞLEME VE ÇİZİM
 # ==========================================
 if uploaded_file:
-    # --- RESİM OKUMA VE DÜZELTME (HATA ÖNLEYİCİ) ---
+    # --- RESİM OKUMA VE DÜZELTME ---
     image_pil = Image.open(uploaded_file)
-    
     image_pil = image_pil.convert("RGB") 
+
+    # ÖNEMLİ: Resmi canvas boyutuna (640x480) getiriyoruz ki ekrana tam otursun
+    image_pil = image_pil.resize((640, 480))
     
     # OpenCV ve YOLO için Numpy dizisine çevir
-    image_cv2 = np.array(image_pil)                 
+    image_cv2 = np.array(image_pil)              
 
     # Ekranı ikiye böl: Çizim ve Sonuç
     col1, col2 = st.columns([2, 1])
