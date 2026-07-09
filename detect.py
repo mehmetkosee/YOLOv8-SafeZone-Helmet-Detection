@@ -6,12 +6,10 @@ import time
 from datetime import datetime
 
 # --- AYARLAR ---
-video_path = 0 # 0 Webcam
+video_path = "test3.mp4" # 0 Webcam
 model_path = "best.pt"
 
-# FPS AYARI: 4 karede bir analiz yap (Hem akıcı hem hızlı)
-PROCESS_EVERY_N_FRAMES = 3 
-# GÖRÜNTÜ BOYUTU: Bunu 640 yaparsan model çok daha hızlı çalışır
+PROCESS_EVERY_N_FRAMES = 1 
 INFERENCE_SIZE = 640 
 
 # --- KAYIT AYARLARI ---
@@ -89,7 +87,7 @@ while True:
         # A. MODEL ANALİZİ (Her 4 karede bir)
         if frame_count % PROCESS_EVERY_N_FRAMES == 0:
             # imgsz=640
-            results = model.track(frame, persist=True, verbose=False, imgsz=INFERENCE_SIZE, conf=0.35)
+            results = model.track(frame, persist=True, verbose=False, imgsz=INFERENCE_SIZE, conf=0.35, device='0') # GPU kullanımı için device='0', CPU için device='cpu'
             
             if results[0].boxes.id is not None:
                 last_boxes = results[0].boxes.xywh.cpu().numpy()
